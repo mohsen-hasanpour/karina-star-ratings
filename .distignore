@@ -1,0 +1,13 @@
+# Files and folders that exist only in the GitHub repository.
+# The deploy workflow copies everything else to WordPress.org SVN trunk
+# (rsync --delete-excluded, so anything listed here is also removed from trunk).
+/.git
+/.github
+/.wordpress-org
+/.distignore
+/.gitignore
+/.gitattributes
+/README.md
+/node_modules
+.DS_Store
+Thumbs.db

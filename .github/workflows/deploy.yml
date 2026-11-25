@@ -1,0 +1,80 @@
+# Deploys the plugin to the WordPress.org plugin directory (SVN).
+#
+# Release:  push a version tag, e.g.  git tag v1.0.2 && git push origin v1.0.2
+#           The tag, the plugin header "Version", RATINGPRESS_VERSION and the readme
+#           "Stable tag" must all match, and readme.txt must have a changelog entry.
+#           Plugin files go to SVN trunk + tags/<version>; .wordpress-org/ goes to SVN assets.
+# Dry run:  Actions tab -> "Deploy to WordPress.org" -> Run workflow.
+#           Does everything except the SVN commit and prints what would change.
+#
+# Requires repository secrets SVN_USERNAME and SVN_PASSWORD (WordPress.org SVN password).
+
+name: Deploy to WordPress.org
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wporg-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: ${{ github.event_name == 'workflow_dispatch' && 'Dry run' || 'Deploy' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check version numbers
+        id: version
+        run: |
+          set -euo pipefail
+          header=$(grep -m1 -E '^[[:space:]]*\*[[:space:]]*Version:' karina-star-ratings.php | awk '{print $NF}' | tr -d '\r')
+          constant=$(grep -oP "define\(\s*'RATINGPRESS_VERSION',\s*'\K[^']+" karina-star-ratings.php)
+          stable=$(grep -m1 -E '^Stable tag:' readme.txt | awk '{print $NF}' | tr -d '\r')
+          echo "Plugin header Version: $header"
+          echo "RATINGPRESS_VERSION:   $constant"
+          echo "readme Stable tag:     $stable"
+
+          if [[ "$header" != "$constant" || "$header" != "$stable" ]]; then
+            echo "::error::Version numbers do not match (header $header, constant $constant, Stable tag $stable)."
+            exit 1
+          fi
+
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            tag="${GITHUB_REF_NAME#v}"
+            echo "Git tag:               $tag"
+            if [[ "$tag" != "$header" ]]; then
+              echo "::error::Tag $GITHUB_REF_NAME does not match plugin version $header."
+              exit 1
+            fi
+            if ! grep -qF "= $tag =" readme.txt; then
+              echo "::error::readme.txt has no changelog entry \"= $tag =\"."
+              exit 1
+            fi
+            echo "version=$tag" >> "$GITHUB_OUTPUT"
+          else
+            # Dry run: use a version that is never published, so the full copy runs.
+            echo "version=$header-dryrun" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Deploy to WordPress.org SVN
+        uses: 10up/action-wordpress-plugin-deploy@54bd289b8525fd23a5c365ec369185f2966529c2 # 2.3.0
+        with:
+          dry-run: ${{ github.event_name == 'workflow_dispatch' }}
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: karina-star-ratings
+          VERSION: ${{ steps.version.outputs.version }}

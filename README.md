@@ -24,7 +24,26 @@ Fast, accessible star ratings for any post type with automatic Schema.org **Aggr
 
 ## Development
 
-This repository mirrors the plugin's `trunk` on the WordPress.org SVN repository. Releases are tagged in SVN at `https://plugins.svn.wordpress.org/karina-star-ratings/tags/`.
+This repository is the source of truth for the plugin. Releases are deployed to the
+[WordPress.org SVN repository](https://plugins.svn.wordpress.org/karina-star-ratings/) by the
+[`Deploy to WordPress.org`](.github/workflows/deploy.yml) workflow.
+
+### Releasing a new version
+
+1. Bump the version in the plugin header (`Version:`), `RATINGPRESS_VERSION` and the `Stable tag` in `readme.txt`.
+2. Add a changelog entry (`= x.y.z =`) to `readme.txt`.
+3. Commit, then tag and push:
+   ```sh
+   git tag vX.Y.Z
+   git push origin main vX.Y.Z
+   ```
+
+The workflow checks that all version numbers match the tag, then copies the plugin to SVN `trunk`,
+creates `tags/X.Y.Z`, and syncs `.wordpress-org/` (banners, icons, screenshots) to SVN `assets`.
+Files listed in [`.distignore`](.distignore) are not deployed.
+
+To test without publishing, run the workflow manually from the **Actions** tab: it performs a dry run
+and lists what would change in SVN.
 
 See [`readme.txt`](readme.txt) for the full description, FAQ and changelog.
 
