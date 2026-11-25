@@ -1,0 +1,312 @@
+/**
+ * Karina Star Ratings front-end styles.
+ *
+ * Customize with CSS custom properties on .ratingpress:
+ * --rp-size, --rp-gap, --rp-active, --rp-inactive, --rp-hover, --rp-justify.
+ */
+
+.ratingpress,
+.ratingpress-top {
+	--rp-dir: to right;
+	--rp-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52 6.12 20.61l1.12-6.55L2.48 9.42l6.58-.96z'/%3E%3C/svg%3E");
+}
+
+[dir="rtl"] .ratingpress,
+[dir="rtl"] .ratingpress-top,
+.rtl .ratingpress,
+.rtl .ratingpress-top {
+	--rp-dir: to left;
+}
+
+.rp-icon-heart {
+	--rp-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54z'/%3E%3C/svg%3E");
+}
+
+.rp-icon-circle {
+	--rp-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3C/svg%3E");
+}
+
+/* Wrapper ---------------------------------------------------------------- */
+
+.ratingpress {
+	--rp-justify: flex-start;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: var(--rp-justify);
+	gap: 0.375em 0.75em;
+	margin: 1.5em 0;
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+.ratingpress.rp-align-center {
+	--rp-justify: center;
+}
+
+.ratingpress.rp-align-end {
+	--rp-justify: flex-end;
+}
+
+.ratingpress.rp-layout-stacked {
+	flex-direction: column;
+	align-items: var(--rp-justify);
+	justify-content: flex-start;
+}
+
+.ratingpress.rp-layout-stacked.rp-align-center {
+	text-align: center;
+}
+
+.ratingpress .rp-heading {
+	font-weight: 600;
+	font-size: 1.05em;
+}
+
+/* Stars ------------------------------------------------------------------ */
+
+.ratingpress .rp-stars,
+.ratingpress-top .rp-stars {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--rp-gap, 4px);
+	line-height: 0;
+}
+
+.ratingpress .rp-star,
+.ratingpress-top .rp-star {
+	-webkit-appearance: none;
+	appearance: none;
+	position: relative;
+	display: inline-flex;
+	flex: 0 0 auto;
+	width: var(--rp-size, 24px);
+	height: var(--rp-size, 24px);
+	min-width: 0;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 4px;
+	background: none;
+	box-shadow: none;
+	color: inherit;
+	font: inherit;
+	line-height: 0;
+	text-transform: none;
+	letter-spacing: normal;
+	transform: none;
+}
+
+.ratingpress button.rp-star {
+	cursor: pointer;
+}
+
+.ratingpress button.rp-star:hover,
+.ratingpress button.rp-star:focus,
+.ratingpress button.rp-star:active {
+	background: none;
+	box-shadow: none;
+	border: 0;
+	color: inherit;
+}
+
+.ratingpress button.rp-star:focus {
+	outline: none;
+}
+
+.ratingpress button.rp-star:focus-visible {
+	outline: 2px solid var(--rp-hover, #ff8a00);
+	outline-offset: 2px;
+}
+
+.rp-star-icon {
+	display: block;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(var(--rp-dir), var(--rp-active, #f5b301) var(--rp-fill, 0%), var(--rp-inactive, #d9dde3) var(--rp-fill, 0%));
+	-webkit-mask: var(--rp-mask) center / contain no-repeat;
+	mask: var(--rp-mask) center / contain no-repeat;
+	pointer-events: none;
+}
+
+.has-animations .rp-star-icon {
+	transition: transform 0.18s ease;
+}
+
+/* Hover preview (classes toggled by frontend.js). */
+.ratingpress .rp-stars.is-hovering .rp-star-icon {
+	background: var(--rp-inactive, #d9dde3);
+}
+
+.ratingpress .rp-stars.is-hovering .rp-star.is-hover .rp-star-icon {
+	background: var(--rp-hover, #ff8a00);
+}
+
+.ratingpress.has-animations .rp-star.is-hover .rp-star-icon {
+	transform: scale(1.15);
+}
+
+/* States ----------------------------------------------------------------- */
+
+.ratingpress.is-busy .rp-stars {
+	opacity: 0.55;
+	pointer-events: none;
+}
+
+.ratingpress.is-voted button.rp-star,
+.ratingpress.is-busy button.rp-star {
+	cursor: default;
+}
+
+.ratingpress.has-animations.is-celebrating .rp-star-icon {
+	animation: rp-pop 0.5s ease both;
+	animation-delay: calc(var(--rp-i, 0) * 45ms);
+}
+
+@keyframes rp-pop {
+	0% {
+		transform: scale(1);
+	}
+
+	40% {
+		transform: scale(1.3);
+	}
+
+	100% {
+		transform: scale(1);
+	}
+}
+
+/* Text ------------------------------------------------------------------- */
+
+.ratingpress .rp-legend {
+	font-size: 0.92em;
+	opacity: 0.8;
+	font-variant-numeric: tabular-nums;
+}
+
+.ratingpress .rp-message {
+	font-size: 0.88em;
+	font-weight: 500;
+}
+
+.ratingpress.rp-layout-inline .rp-message {
+	flex-basis: 100%;
+	text-align: inherit;
+}
+
+.ratingpress .rp-message:empty {
+	display: none;
+}
+
+.ratingpress .rp-message.is-success {
+	color: #15803d;
+}
+
+.ratingpress .rp-message.is-error {
+	color: #b91c1c;
+}
+
+.ratingpress .rp-message a {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.ratingpress .screen-reader-text {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* Top rated list --------------------------------------------------------- */
+
+.ratingpress-top {
+	--rp-size: 16px;
+	--rp-gap: 2px;
+	margin: 1.5em 0;
+	padding: 0;
+	list-style: none;
+	counter-reset: rp-top;
+}
+
+.ratingpress-top .rp-top-item {
+	margin: 0;
+	padding: 0;
+	counter-increment: rp-top;
+}
+
+.ratingpress-top .rp-top-item + .rp-top-item {
+	border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.ratingpress-top .rp-top-link {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 0;
+	color: inherit;
+	text-decoration: none;
+}
+
+.ratingpress-top .rp-top-link::before {
+	content: counter(rp-top);
+	flex: 0 0 auto;
+	width: 1.75em;
+	font-weight: 700;
+	opacity: 0.35;
+	text-align: center;
+}
+
+.ratingpress-top .rp-top-thumb img {
+	display: block;
+	width: 52px;
+	height: 52px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.ratingpress-top .rp-top-body {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+}
+
+.ratingpress-top .rp-top-title {
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.ratingpress-top .rp-top-link:hover .rp-top-title,
+.ratingpress-top .rp-top-link:focus .rp-top-title {
+	text-decoration: underline;
+}
+
+.ratingpress-top .rp-top-meta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 0.85em;
+}
+
+.ratingpress-top .rp-legend {
+	opacity: 0.75;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ratingpress .rp-star-icon {
+		transition: none !important;
+		animation: none !important;
+	}
+
+	.ratingpress.has-animations .rp-star.is-hover .rp-star-icon {
+		transform: none;
+	}
+}

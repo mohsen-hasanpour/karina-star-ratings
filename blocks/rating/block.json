@@ -1,0 +1,48 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ratingpress/rating",
+	"version": "1.0.0",
+	"title": "Karina Star Rating",
+	"category": "widgets",
+	"icon": "star-filled",
+	"description": "Display interactive star ratings with automatic rich snippets.",
+	"keywords": [ "rating", "stars", "review", "vote", "schema" ],
+	"textdomain": "karina-star-ratings",
+	"usesContext": [ "postId", "postType" ],
+	"attributes": {
+		"postId": {
+			"type": "number",
+			"default": 0
+		},
+		"readonly": {
+			"type": "boolean",
+			"default": false
+		},
+		"showLegend": {
+			"type": "boolean",
+			"default": true
+		},
+		"heading": {
+			"type": "string",
+			"default": ""
+		},
+		"alignment": {
+			"type": "string",
+			"default": ""
+		},
+		"size": {
+			"type": "number",
+			"default": 0
+		}
+	},
+	"supports": {
+		"html": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "ratingpress"
+}
